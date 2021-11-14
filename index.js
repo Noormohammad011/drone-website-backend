@@ -39,195 +39,67 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     await client.connect()
-    //Tourist Collection
-    // const TouristCollection = client.db('touristMenia').collection('tourist')
-    //Tourist Oreder Collection
-    // const TouristOrderCollection = client
-    //   .db('touristMenia')
-    //   .collection('touristOrder')
-    //Tourist Place Info
-    // const TouristPlaceInfo = client
-    //   .db('touristMenia')
-    //   .collection('touristPlaceInfo')
-    //Faq
-    // const FaqInfo = client.db('touristMenia').collection('faq')
-    //Gallery
-    // const Gallery = client.db('touristMenia').collection('ImageCollection')
+    const drone = client.db('droneMenia')
+    const droneCollection = drone.collection('drones')
+    const usersCollection = drone.collection('users')
+    const orderCollection = drone.collection('orders')
+    const reviewCollection = drone.collection('reviews')
 
-    /* Tourist Place Information
-        get: /allTouristPlace
-        post: /addTouristPlace
-        getById: /allTouristPlace/:id
-        update: /allTouristPlace/:id
-        delete: /deleteTouristInfo/:id
-        faq: /faq
-    */
-    // add touristplace
-    // app.post('/addTouristPlace', async (req, res) => {
-    //   const result = await TouristPlaceInfo.insertOne(req.body)
-    //   res.json(result)
-    // })
+    //get all drones collection
+    app.get('/drones', async (req, res) => {
+      const drones = await droneCollection.find().toArray()
+      res.json(drones)
+    })
+    //create drone information
+    app.post('/drones', async (req, res) => {
+      const drone = req.body
+      const newDrone = await droneCollection.insertOne(drone)
+      res.json(newDrone)
+    })
+    //get single drone information
+    app.get('/drones/:id', async (req, res) => {
+      const id = req.params.id
+      const drone = await droneCollection.findOne({ _id: ObjectId(id) })
+      res.json(drone)
+    })
 
-    // GET touristPlace
-    // app.get('/allTouristPlace', async (req, res) => {
-    //   const cursor = TouristPlaceInfo.find({})
-    //   const touristPlaces = await cursor.toArray()
-    //   res.json(touristPlaces)
-    // })
+    //post order information
+    app.post('/orders', async (req, res) => {
+      const order = req.body
+      const newOrder = await orderCollection.insertOne(order)
+      res.json(newOrder)
+    })
 
-    // GET single touristPlace
-    // app.get('/allTouristPlace/:id', async (req, res) => {
-    //   const id = req.params.id
-    //   const query = { _id: ObjectId(id) }
-    //   const touristPlace = await TouristPlaceInfo.findOne(query)
-    //   res.json(touristPlace)
-    // })
-
-    //Update touristPlace
-    // app.put('/allTouristPlace/:id', async (req, res) => {
-    //   const id = req.params.id
-    //   const updateTplaceInfo = req.body
-    //   const filter = { _id: ObjectId(id) }
-    //   const options = { upsert: true }
-    //   const updateDoc = {
-    //     $set: {
-    //       title: updateTplaceInfo.title,
-    //       description: updateTplaceInfo.description,
-    //       image: updateTplaceInfo.image,
-    //       price: updateTplaceInfo.price,
-    //     },
-    //   }
-    //   const result = await TouristPlaceInfo.updateOne(
-    //     filter,
-    //     updateDoc,
-    //     options
-    //   )
-    //   res.json(result)
-    // })
-    // delete touristPlacesInfo
-    // app.delete('/deleteTouristInfo/:id', async (req, res) => {
-    //   const result = await TouristPlaceInfo.deleteOne({
-    //     _id: ObjectId(req.params.id),
-    //   })
-    //   res.send(result)
-    // })
-
-    /* Tourist Information
-        get: /allTourists
-        post: /addTourist
-        post: /contactUs
-    */
-    // add tourist
-    // app.post('/addTourist', async (req, res) => {
-    //   const result = await TouristCollection.insertOne(req.body)
-    //   res.json(result)
-    // })
-    // app.post('/contactUs', async (req, res) => {
-    //   const result = await TouristCollection.insertOne(req.body)
-    //   res.json(result)
-    // })
-
-    // get all tourists
-    // app.get('/allTourists', async (req, res) => {
-    //   const result = await TouristCollection.find({}).toArray()
-    //   res.json(result)
-    // })
-    /* Tourist Order
-        
-        post: /addTouristOrder
-        get: /myOrder/:email
-        delete: /myOrder/:id
-        getAll: /allOrders
-        delete:/allOrders/:id
-        put: /allOrders/:id
-        get: /allOrders/:id
-    */
-    // add touristOrder
-    // app.post('/addTouristOrder', async (req, res) => {
-    //   const result = await TouristOrderCollection.insertOne(req.body)
-    //   res.json(result)
-    // })
     // my Orders
-    // app.get('/myOrder/:email', async (req, res) => {
-    //   const result = await TouristOrderCollection.find({
-    //     email: req.params.email,
-    //   }).toArray()
-    //   res.send(result)
-    // })
-    //get single orders
-    // app.get('/allOrders/:id', async (req, res) => {
-    //   const id = req.params.id
-    //   const query = { _id: ObjectId(id) }
-    //   const singleOrder = await TouristOrderCollection.findOne(query)
-    //   res.json(singleOrder)
-    // })
+    app.get('/myOrder/:email', async (req, res) => {
+      const result = await orderCollection
+        .find({
+          email: req.params.email,
+        })
+        .toArray()
+      res.json(result)
+    })
+
     // delete myOrder
-    // app.delete('/myOrder/:id', async (req, res) => {
-    //   const result = await TouristOrderCollection.deleteOne({
-    //     _id: ObjectId(req.params.id),
-    //   })
-    //   res.send(result)
-    // })
+    app.delete('/myOrder/:id', async (req, res) => {
+      const result = await orderCollection.deleteOne({
+        _id: ObjectId(req.params.id),
+      })
+      res.json(result)
+    })
 
-    // GET allOrders
-    // app.get('/allOrders', async (req, res) => {
-    //   const cursor = TouristOrderCollection.find({})
-    //   const touristOrders = await cursor.toArray()
-    //   res.json(touristOrders)
-    // })
+    //post review information
+    app.post('/reviews', async (req, res) => {
+      const review = req.body
+      const newReview = await reviewCollection.insertOne(review)
+      res.json(newReview)
+    })
 
-    // delete allOrder
-    // app.delete('/allOrders/:id', async (req, res) => {
-    //   const result = await TouristOrderCollection.deleteOne({
-    //     _id: ObjectId(req.params.id),
-    //   })
-    //   res.send(result)
-    // })
-    //Update panding state
-    // app.put('/allOrders/:id', async (req, res) => {
-    //   const id = req.params.id
-    //   const updateTplaceInfo = req.body
-    //   const filter = { _id: ObjectId(id) }
-    //   const options = { upsert: true }
-    //   const updateDoc = {
-    //     $set: {
-    //       pending: updateTplaceInfo.pending,
-    //     },
-    //   }
-    //   const result = await TouristOrderCollection.updateOne(
-    //     filter,
-    //     updateDoc,
-    //     options
-    //   )
-    //   res.json(result)
-    // })
-    /* Faq
-        get: /faq
-
-    */
-    // GET faq
-    // app.get('/faq', async (req, res) => {
-    //   const cursor = FaqInfo.find({})
-    //   const faq = await cursor.toArray()
-    //   res.json(faq)
-    // })
-    /* Faq
-        get: /gallery
-        post: /gallery
-
-    */
-    // GET faq
-    // app.get('/gallery', async (req, res) => {
-    //   const cursor = Gallery.find({})
-    //   const gallery = await cursor.toArray()
-    //   res.json(gallery)
-    // })
-
-    // POST gallery
-    // app.post('/gallery', async (req, res) => {
-    //   const result = await Gallery.insertOne(req.body)
-    //   res.json(result)
-    // })
+    //get all reviews
+    app.get('/reviews', async (req, res) => {
+      const reviews = await reviewCollection.find().toArray()
+      res.json(reviews)
+    })
   } finally {
     // await client.close();
   }
