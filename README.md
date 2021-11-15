@@ -1,6 +1,6 @@
 # TeouristMenia Backend
 
-TouristMenia
+Drone
 
 * crud operation
 * Firebase authentication
@@ -31,5 +31,5 @@ Install my-project with yarn
   
 ## Demo
 
-https://volunteerapp-244c3.web.app/
+https://dronekillingmachine.web.app/
  
